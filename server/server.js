@@ -1,7 +1,6 @@
 // Import Packages
 const express  = require('express');
 const line     = require('@line/bot-sdk');
-const request  = require('request');
 const portNum  = process.env.PORT || 3000;
 
 // Import self-made module
@@ -43,7 +42,7 @@ function handleEvent(event){
 
   // When a user adds bot as a friend or unblocks the bot
   if(event.type === 'follow'){
-    const greetText = 'あ、つながった…\nえっと、こんにちは、壊れかけBOTです…\n壊れるまでの間、少し会話してもらってもいいですか?\n返事も遅いですし、内容も支離滅裂かもしれませんですが…\n\nあと、私の様子は「モニター」でご覧になれますので、たまに見てくださいね。';
+    const greetText = 'え？あ、つながった…\n\nえっと、こんにちは…\nいきなりですが、私は後少しで完全に壊れてしまいます…\n\nですので、あの、壊れるまでの間少し会話してもらってもいいですか?\n返事も遅くて、内容も支離滅裂かもしれませんですが…お願いします\n\nあと、私の様子は「モニター」でご覧になれますので、たまに見てくださいね。';
     return client.replyMessage(event.replyToken, replyText(userId, greetText));
   }
 
