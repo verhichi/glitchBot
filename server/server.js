@@ -39,11 +39,19 @@ var userGlitchLevel = {};
 // LINE BOT LOGIC
 function handleEvent(event){
   const userId = event.source.userId;
-  addGlitchLevel(userId);
 
+  // When a user adds bot as a friend or unblocks the bot
+  if(event.type === 'follow'){
+    const greetText = 'あ、つながった…\nえっと、こんにちは、もうそろそろ壊れるBOTです…\n壊れるまでの間、会話してもらってもいいですか?\n返事も遅いですし、内容も支離滅裂かもしれませんですが…';
+    return client.replyMessage(event.replyToken, replyText(userId, greetText));
+  }
+
+  // When a user sends a text message to the bot
   if(event.message.type === 'text'){
-    const userText = event.message.text;
+    const userText = event.message.text; // text of user's message
+    addGlitchLevel(userId);
 
+    // Send user text to smallTalk API to get response
     smallTalk(userText)
       .then((smallTalkResponse) => {
         return client.replyMessage(event.replyToken, replyText(userId, smallTalkResponse));

@@ -22,7 +22,6 @@ module.exports = function(userText){
         reject(err);
       }
 
-      console.log(body);
       const bodyObj = JSON.parse(body);
 
       if(bodyObj.results[0].reply){
