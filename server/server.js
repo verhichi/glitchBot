@@ -109,7 +109,22 @@ function handleEvent(event){
 // General function to return text object
 function replyText(userId, text){
   const returnText = glitchifyText(userId, text);
-  return {type: 'text', text: returnText};
+  return {
+    type: 'text',
+    text: returnText,
+    quickReply: {
+      items:[
+        {
+          type: 'action',
+          action: {
+            type: 'message',
+            label: 'モニターを見る',
+            text: 'モニター'
+          }
+        }
+      ]
+    }
+  };
 }
 
 // Set user's glitch Level(add to userId key if not yet defined)
