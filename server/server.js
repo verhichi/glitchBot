@@ -91,7 +91,7 @@ function handleEvent(event){
     if(userText === 'リセット'){
       userGlitchLevel[userId] = 0;
       const resetText = 'あ、なんか直った...?\n\nよくわかりませんが誰かが直してくれたようです。\n\n私が気づかない間に修理するなんて…すごい…\n\nとりあえず感謝ですね!これでもっとお話できます!';
-      return client.replyMessage(event.replyToken, replyText(resetText));
+      return client.replyMessage(event.replyToken, replyText(userId, resetText));
     }
 
     // Set glitch Level
