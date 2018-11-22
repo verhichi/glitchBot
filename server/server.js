@@ -5,8 +5,9 @@ const request  = require('request');
 const portNum  = process.env.PORT || 3000;
 
 // Import self-made module
-const smallTalk       = require('./modules/smallTalk');
-const glitchCharArray = require('./modules/glitchChar');
+const smallTalk        = require('./modules/smallTalk');
+const glitchCharArray  = require('./modules/glitchChar');
+const glitchImageArray =require('./modules/glitchImage');
 
 // Start up express server
 const app = express();
@@ -42,7 +43,7 @@ function handleEvent(event){
 
   // When a user adds bot as a friend or unblocks the bot
   if(event.type === 'follow'){
-    const greetText = 'あ、つながった…\nえっと、こんにちは、もうそろそろ壊れるBOTです…\n壊れるまでの間、会話してもらってもいいですか?\n返事も遅いですし、内容も支離滅裂かもしれませんですが…';
+    const greetText = 'あ、つながった…\nえっと、こんにちは、壊れかけBOTです…\n壊れるまでの間、少し会話してもらってもいいですか?\n返事も遅いですし、内容も支離滅裂かもしれませんですが…\n\nあと、私の様子は「モニター」でご覧になれますので、たまに見てくださいね。';
     return client.replyMessage(event.replyToken, replyText(userId, greetText));
   }
 
@@ -68,9 +69,9 @@ function handleEvent(event){
           },
           hero: {
             type: 'image',
-            url: 'https://i.ytimg.com/vi/0RS-Zm6k6gs/maxresdefault.jpg',
+            url: glitchImageArray[getGlitchLevel(userId)][Math.floor(Math.random() * glitchImageArray[getGlitchLevel(userId)].length)],
             size: 'full',
-            aspectRatio: '16:9',
+            aspectRatio: '1:1',
             aspectMode: 'cover'
           },
           footer: {
@@ -78,7 +79,7 @@ function handleEvent(event){
             layout: 'vertical',
             contents: [{
               type: 'text',
-              text: '1-5-15',
+              text: 'Source: http://seiga.nicovideo.jp/seiga/im4937714',
               color: '#aaaaaa',
               size: 'xxs'
             }]
@@ -131,7 +132,7 @@ function replyText(userId, text){
 // 25% chance for glitch level to increase
 function addGlitchLevel(userId){
   if(Math.random() <= 0.25){
-    if(userGlitchLevel[userId]){
+    if(userGlitchLevel[userId] < 9){
       userGlitchLevel[userId]++;
     }else{
       userGlitchLevel[userId] = 1;
