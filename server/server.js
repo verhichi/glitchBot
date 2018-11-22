@@ -1,6 +1,7 @@
 // Import Packages
 const express  = require('express');
 const line     = require('@line/bot-sdk');
+const request  = require('request');
 const portNum  = process.env.PORT || 3000;
 
 // Start up express server
@@ -15,13 +16,7 @@ const lineConfig = {
   channelSecret: 'fab1ae7d4fedc67c17dcd23b54b6ee59',
   channelAccessToken: 'GEtiNseegEXhR4vyA7mHon1G9eloQadCLzU4T9abT2c0BF8FZfUqLgE6PbCM1U+onJdWcYfSK/+x91sNCsfwCiQYnmXiWZHZu9f99kWVXECbXhkjqQVQeCj/gDzgvVtYwuwo4SLdWOPFo1yMpgrLLAdB04t89/1O/w1cDnyilFU='
 };
-
-// API key for docomo conversation API, issue a new one on production and set the values to be environment variables
-const docomoConfig = {
-  id: '7Vx3sRJAwAcMaGNwQeriyQSZD3ASZPz7QQcfYEcJsF2P',
-  secret: 'T\7fz_C.f:XyUR=L[]ZZ',
-  key: '4277744164576c47386f6d552e6e6e6c7037313463755647635577777130666f5176743547685546416f34'
-};
+const client = new line.Client(lineConfig);
 
 
 // Routing for the linebot webhook
@@ -33,18 +28,60 @@ app.post('/webhook', line.middleware(lineConfig), (req, res) => {
 
 
 // LINE BOT LOGIC
-const client = new line.Client(lineConfig);
-
 function handleEvent(event){
-  console.log(event);
 
   if(event.message.type === 'text'){
-    return client.replyMessage(event.replyToken, {
-      type: 'text',
-      text: event.message.text
-    });
+    const userText = event.message.text;
+
+    docomoChat(userText)
+      .then((docomoResponse) => {
+        return client.replyMessage(event.replyToken, {
+          type: 'text',
+          text: docomoResponse
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+
+        return client.replyMessage(event.replyToken, {
+          type: 'text',
+          text: '...'
+        });
+      });
+
   } else {
     return Promise.resolve(null);
   }
+
+}
+
+
+
+// API key and URL for docomo conversation API, issue a new one on production and set the values to be environment variables
+const docomoApiKey = '4277744164576c47386f6d552e6e6e6c7037313463755647635577777130666f5176743547685546416f34';
+const docomoRequestUrl = `https://api.apigw.smt.docomo.ne.jp/naturalChatting/v1/dialogue?APIKEY=${docomoApiKey}`;
+const docomoAppId = '309ad727-cf3f-4270-bf07-076ce82228e7';
+
+function docomoChat(userText){
+  const docomoRequestOption = {
+    url: docomoRequestUrl,
+    headers: {'Content-Type': 'application/json;charset=UTF-8'},
+    body: JSON.stringify({
+      language: 'ja-JP',
+      botId: 'Chatting',
+      appId: docomoAppId,
+      voiceText: userText
+    })
+  };
+
+  return new Promise((resolve, reject) => {
+    request.post(docomoRequestOption, function(err, res, body){
+      if(err) reject(err);
+
+      const bodyObj = JSON.parse(body);
+      resolve(bodyObj.systemText.expression);
+    });
+  });
+
 
 }
