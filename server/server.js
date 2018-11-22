@@ -4,6 +4,10 @@ const line     = require('@line/bot-sdk');
 const request  = require('request');
 const portNum  = process.env.PORT || 3000;
 
+// Import self-made module
+const smallTalk       = require('./modules/smallTalk');
+const glitchCharArray = require('./modules/glitchChar');
+
 // Start up express server
 const app = express();
 app.listen(portNum, () => {
@@ -27,26 +31,26 @@ app.post('/webhook', line.middleware(lineConfig), (req, res) => {
 });
 
 
+// Hold user id and glitch level(increases as users talks with bot)
+// The higher the userGlitchLevel, the buggier the text becomes
+var userGlitchLevel = {};
+
+
 // LINE BOT LOGIC
 function handleEvent(event){
+  const userId = event.source.userId;
+  addGlitchLevel(userId);
 
   if(event.message.type === 'text'){
     const userText = event.message.text;
 
-    docomoChat(userText)
-      .then((docomoResponse) => {
-        return client.replyMessage(event.replyToken, {
-          type: 'text',
-          text: docomoResponse
-        });
+    smallTalk(userText)
+      .then((smallTalkResponse) => {
+        return client.replyMessage(event.replyToken, replyText(userId, smallTalkResponse));
       })
       .catch((err) => {
         console.error(err);
-
-        return client.replyMessage(event.replyToken, {
-          type: 'text',
-          text: '...'
-        });
+        return client.replyMessage(event.replyToken, replyText(userId, '...'));
       });
 
   } else {
@@ -55,33 +59,39 @@ function handleEvent(event){
 
 }
 
+// General function to return text object
+function replyText(userId, text){
+  const returnText = glitchifyText(userId, text);
+  return {type: 'text', text: returnText};
+}
+
+// Set user's glitch Level(add to userId key if not yet defined)
+// 25% chance for glitch level to increase
+function addGlitchLevel(userId){
+  if(Math.random() <= 0.25){
+    if(userGlitchLevel[userId]){
+      userGlitchLevel[userId]++;
+    }else{
+      userGlitchLevel[userId] = 1;
+    }
+  }
+}
+
+// Get user's glitch level(0 if not yet defined)
+function getGlitchLevel(userId){
+  return userGlitchLevel[userId] || 0;
+}
 
 
-// API key and URL for docomo conversation API, issue a new one on production and set the values to be environment variables
-const docomoApiKey = '4277744164576c47386f6d552e6e6e6c7037313463755647635577777130666f5176743547685546416f34';
-const docomoRequestUrl = `https://api.apigw.smt.docomo.ne.jp/naturalChatting/v1/dialogue?APIKEY=${docomoApiKey}`;
-const docomoAppId = '309ad727-cf3f-4270-bf07-076ce82228e7';
+// Glitch bot response based on user's glitch Level
+function glitchifyText(userId, text){
+  let returnTextArray = text.split('');
 
-function docomoChat(userText){
-  const docomoRequestOption = {
-    url: docomoRequestUrl,
-    headers: {'Content-Type': 'application/json;charset=UTF-8'},
-    body: JSON.stringify({
-      language: 'ja-JP',
-      botId: 'Chatting',
-      appId: docomoAppId,
-      voiceText: userText
-    })
-  };
+  // Replace glitchLevel amount of random character's with random glitchChar from glitchCharArray
+  for(let count = 0; count < getGlitchLevel(userId); count++){
+    const glitchChar = glitchCharArray[Math.floor(Math.random() * glitchCharArray.length)];
+    returnTextArray[Math.floor(Math.random() * returnTextArray.length)] = glitchChar;
+  }
 
-  return new Promise((resolve, reject) => {
-    request.post(docomoRequestOption, function(err, res, body){
-      if(err) reject(err);
-
-      const bodyObj = JSON.parse(body);
-      resolve(bodyObj.systemText.expression);
-    });
-  });
-
-
+  return returnTextArray.join('');
 }
