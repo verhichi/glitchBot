@@ -49,6 +49,45 @@ function handleEvent(event){
   // When a user sends a text message to the bot
   if(event.message.type === 'text'){
     const userText = event.message.text; // text of user's message
+
+    if(userText === 'モニター'){
+      return client.replyMessage(event.replyToken, {
+        type: 'flex',
+        altText: 'モニター',
+        contents: {
+          type: 'bubble',
+          header: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [{
+              type: 'text',
+              text: 'モニター',
+              weight: 'bold',
+              align: 'center'
+            }]
+          },
+          hero: {
+            type: 'image',
+            url: 'https://i.ytimg.com/vi/0RS-Zm6k6gs/maxresdefault.jpg',
+            size: 'full',
+            aspectRatio: '16:9',
+            aspectMode: 'cover'
+          },
+          footer: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [{
+              type: 'text',
+              text: '1-5-15',
+              color: '#aaaaaa',
+              size: 'xxs'
+            }]
+          }
+        }
+      });
+    }
+
+    // Set glitch Level
     addGlitchLevel(userId);
 
     // Send user text to smallTalk API to get response
