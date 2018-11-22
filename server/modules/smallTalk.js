@@ -4,7 +4,7 @@
 const request = require('request');
 
 // API key and URL for smallTalk conversation API, issue a new one on production and set the values to be environment variables
-const smallTalkApiKey = 'DZZz7RAMAvyluBTnmwzJX3SVPzuTlVK5';
+const smallTalkApiKey = process.env.SMALLTALK_KEY;
 const smallTalkRequestUrl = 'https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk';
 
 module.exports = function(userText){

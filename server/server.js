@@ -18,8 +18,8 @@ app.listen(portNum, () => {
 
 // API key for the LINE BOT, issue a new one on production and set the values to be environment variables
 const lineConfig = {
-  channelSecret: 'fab1ae7d4fedc67c17dcd23b54b6ee59',
-  channelAccessToken: 'GEtiNseegEXhR4vyA7mHon1G9eloQadCLzU4T9abT2c0BF8FZfUqLgE6PbCM1U+onJdWcYfSK/+x91sNCsfwCiQYnmXiWZHZu9f99kWVXECbXhkjqQVQeCj/gDzgvVtYwuwo4SLdWOPFo1yMpgrLLAdB04t89/1O/w1cDnyilFU='
+  channelSecret: process.env.LINE_SECRET,
+  channelAccessToken: process.env.LINE_TOKEN
 };
 const client = new line.Client(lineConfig);
 
@@ -86,6 +86,12 @@ function handleEvent(event){
           }
         }
       });
+    }
+
+    if(userText === 'リセット'){
+      userGlitchLevel[userId] = 0;
+      const resetText = 'あ、なんか直った...?\n\nよくわかりませんが誰かが直してくれたようです。\n\n私が気づかない間に修理するなんて…すごい…\n\nとりあえず感謝ですね!これでもっとお話できます!';
+      return client.replyMessage(event.replyToken, replyText(resetText));
     }
 
     // Set glitch Level
