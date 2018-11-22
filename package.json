@@ -1,8 +1,7 @@
 {
   "name": "glitchBot",
   "scripts": {
-    "start": "node server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/server.js"
   },
   "author": "Daichi Nishida",
   "license": "ISC",
