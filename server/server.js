@@ -97,15 +97,25 @@ function handleEvent(event){
     // Set glitch Level
     addGlitchLevel(userId);
 
-    // Send user text to smallTalk API to get response
-    smallTalk(userText)
-      .then((smallTalkResponse) => {
-        return client.replyMessage(event.replyToken, replyText(userId, smallTalkResponse));
-      })
-      .catch((err) => {
-        console.error(err);
-        return client.replyMessage(event.replyToken, replyText(userId, '...'));
+    if(getGlitchLevel(userId) < 9){
+      // Send user text to smallTalk API to get response
+      smallTalk(userText)
+        .then((smallTalkResponse) => {
+          return client.replyMessage(event.replyToken, replyText(userId, smallTalkResponse));
+        })
+        .catch((err) => {
+          console.error(err);
+          return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: '...'
+          });
+        });
+    } else {
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: '...'
       });
+    }
 
   } else {
     return Promise.resolve(null);
