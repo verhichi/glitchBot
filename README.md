@@ -3,6 +3,7 @@
 1. TL;DR
 1. Technologies Used
 1. Images
+1. Add me
 
 # 1. Concept
 - Out there, was a world that was about to reach its end.
@@ -50,3 +51,10 @@ This "BOT" is a LINE BOT, just to make things clear.
 # 4. Images
 The image used in this application is a work illustrated by "Hoshimiya Aki", an artist in "Niconico Seiga".
 It was posted as a "free icon" so I took the liberty to use it, but if asked I will take it down immediately.
+
+Source: http://seiga.nicovideo.jp/seiga/im4937714?track=seiga_illust_keyword
+
+# 5. Add me
+Use the QR code shown below and add this bot and try it out!
+
+![1542888124713.jpg](https://qiita-image-store.s3.amazonaws.com/0/317253/c024e171-34a4-e6ef-5507-048d1c00859a.jpeg)
